@@ -1,0 +1,54 @@
+﻿@page "/"
+@if (ship != null)
+{
+    <h3>Ship</h3>
+    <div>The case. A ship stock can only be disembarked when:</div>
+    <ul>
+        <li>The captain authorised to disembark</li>
+        <li>The second in line, the steersman, affirms the captains authorisation</li>
+    </ul>
+    <div>
+        The stock consists of multiple stock items that have a weight.
+        Only items that are lighter than @FluentDecoratorBlazor.FluentRenderingModel.Ship.MaxDisembarkWeight.ToString() can be disembarked.
+    </div>
+    <div>
+        The stockitems are only shown after the steersman has authorized disembarking, and as long there are items to disembark.
+        The heavy items that can't be disembark are disabled from disembarking.
+    </div>
+    <hr />
+    <p></p>
+    <h4>Disembark @ship.Name</h4>
+    <div style="font-weight:600">Status: @GetStatus</div>
+    <p></p>
+
+
+    @*Visibility is done through class*@
+    <div class="@modelDecorated.GetFor(s => s.Captain).Class">
+        <h4>It's up to the captain to approve the start of the disembarking</h4>
+        <button @onclick="@(ev => DisEmbarkingApprovedBy(ship.Captain))">Captain gives approval to Disembark</button>
+    </div>
+    <div class="@modelDecorated.GetFor(s => s.Steersman).Class">
+        <h4>It's up to the steersman to approve the start of the disembarking</h4>
+        <button @onclick="@(ev => DisEmbarkingApprovedBy(ship.Steersman))">Steersman affirms the approval by the captain.</button>
+    </div>
+
+    @*In stead of using the model, we use the decoration.*@
+    @if (modelDecorated.GetFor(x => x.Status).Visible)
+    {
+        <p></p>
+        <div style="font-weight:600">
+            Only stock items with a weight greater than @FluentDecoratorBlazor.FluentRenderingModel.Ship.MaxDisembarkWeight.ToString() cannot be disembarked.
+            The disembarking is done when all stockitems lighter than @FluentDecoratorBlazor.FluentRenderingModel.Ship.MaxDisembarkWeight.ToString() are disembarked.
+        </div>
+        <p></p>
+        @foreach (var stockItem in ship.Stock)
+        {
+            <div class="grid-container">
+                <div>Description: @stockItem.Description</div>
+                <div>Weight: @stockItem.Weight</div>
+                @*Each item is decorated with an enabled attribute.*@
+                <button @onclick="@(() => Disembark(stockItem))" disabled="@(!stockItemDecorations[stockItem.Id].Decorators.Enabled)">Disembark</button>
+            </div>
+        }
+    }
+}

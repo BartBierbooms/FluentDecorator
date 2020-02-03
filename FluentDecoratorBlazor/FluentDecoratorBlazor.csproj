@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <RazorLangVersion>3.0</RazorLangVersion>
+    <Authors>Bart Bierbooms</Authors>
+    <Company>-</Company>
+    <Description>A library to decorate (you can also call it extend) a model with extra properties. You can add rendering properties to a business model, keeping business logic in the model and rendering logic in the decorator. 
+Certainly useful in case that server-side and client-side model can be the same (Blazor).</Description>
+    <PackageId>FluentDecorator</PackageId>
+    <Product></Product>
+    <PackageReleaseNotes>First implementation with only core functionality. See test project for practical example.</PackageReleaseNotes>
+    <PackageTags>Decorator;Extensions;Blazor;Fluent</PackageTags>
+  </PropertyGroup>
+
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="8.6.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Blazor" Version="3.1.0-preview4.19579.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Blazor.Build" Version="3.1.0-preview4.19579.2" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.AspNetCore.Blazor.HttpClient" Version="3.1.0-preview4.19579.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Blazor.DevServer" Version="3.1.0-preview4.19579.2" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FluentDecorator\FluentDecorator.csproj" />
+  </ItemGroup>
+
+</Project>

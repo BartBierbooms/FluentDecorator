@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Company />
+    <Description>A package to decorate (extend) a model with additional properties. This can be useful if you have a model shared on server-side and client-side (Blazor), where you want business logic be separated from the rendering logic. Fluent Decorator let you define this rendering logic in a centralized place.</Description>
+    <PackageReleaseNotes>First implementation with only core functionality</PackageReleaseNotes>
+    <PackageLicenseExpression>BSD-2-Clause</PackageLicenseExpression>
+    <Copyright>2020 Bart Bierbooms</Copyright>
+    <PackageProjectUrl>https://github.com/BartBierbooms/FluentDecorator</PackageProjectUrl>
+    <PackageTags>Decorator;Extend;Blazor;Fluent</PackageTags>
+  </PropertyGroup>
+
+</Project>
