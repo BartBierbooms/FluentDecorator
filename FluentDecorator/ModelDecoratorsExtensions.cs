@@ -20,7 +20,7 @@ namespace FluentDecorator
         {
             return input =>
             {
-                return new ModelDecorators<TI, TS>(input, new TS());
+                return new ModelDecorators<TI, TS>(input, new TS(), null);
             };
         }
 
@@ -30,14 +30,15 @@ namespace FluentDecorator
         /// <typeparam name="TI">The model type</typeparam>
         /// <typeparam name="TS">The decorator type</typeparam>
         /// <param name="decorators">Func delegate to create a decorator type</param>
+        /// <param name="filter">Specify if the attribute FilterDecorator is used to filter the properties to decorate</param>
         /// <returns>WithDecorators delegate</returns>
-        public static WithDecorators<TI, IModelDecorators<TI, TS>> Init<TI, TS>(Func<TS> decorators)
+        public static WithDecorators<TI, IModelDecorators<TI, TS>> Init<TI, TS>(Func<TS> decorators, FilterSetting filter = null)
             where TI : new()
             where TS : DecoratorsAbstract, new()
         {
             return input =>
             {
-                return new ModelDecorators<TI, TS>(input, decorators());
+                return new ModelDecorators<TI, TS>(input, decorators(), filter);
             };
         }
 

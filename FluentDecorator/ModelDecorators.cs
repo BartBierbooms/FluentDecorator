@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-
-
+using System.Reflection;
+using System.Linq;
 namespace FluentDecorator
 {
     /// <summary>
@@ -28,28 +28,50 @@ namespace FluentDecorator
         /// The decorators. TS must inherit from DecoratorsAbstract
         /// </summary>
         public TS Decorators { get; }
+
         public ModelDecorators() { }
-        public ModelDecorators(T val, TS decorators)
+        public ModelDecorators(T val, TS decorators, FilterSetting filter = null)
         {
 
             Val = val;
             Decorators = decorators;
-            PropertyDecorators = GetPropertyNames(typeof(T), PropertyDecorators);
+            PropertyDecorators = GetPropertyNames(typeof(T), PropertyDecorators, filter, "", null);
         }
 
-        private Dictionary<string, TS> GetPropertyNames(Type type, Dictionary<string, TS> propertyList, string memberPath = "")
+        private Dictionary<string, TS> GetPropertyNames(Type type, Dictionary<string, TS> propertyList, FilterSetting filter, string memberPath, Type callingType )
         {
-            var prpInfo = type.GetProperties();
-
-            for (int i = 0; i < prpInfo.Length; i++)
+            
+            var reflectedPrpInfos = type.GetProperties(BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
+            if (filter != null) 
             {
-                if (!prpInfo[i].PropertyType.IsValueType
-                    && prpInfo[i].PropertyType != typeof(string))
+                if (filter.Include)
                 {
-                    if (!typeof(IEnumerable).IsAssignableFrom(prpInfo[i].PropertyType) || prpInfo[i].PropertyType == typeof(string))
+                    reflectedPrpInfos = reflectedPrpInfos.Where(prp => prp.GetCustomAttributes<LimitDecorationToAttribute>().Any()).ToArray();
+                }
+                else 
+                {
+                    reflectedPrpInfos = reflectedPrpInfos.Where(prp => !prp.GetCustomAttributes<ExcludeFromDecorationAttribute>().Any()).ToArray();
+                }
+            }
+
+            IList<PropertyInfo> prpInfos;
+            if (callingType != null)
+            {
+                prpInfos = reflectedPrpInfos.Where(pi => !pi.PropertyType.Equals(callingType)).ToList();
+            }
+            else 
+            {
+                prpInfos = reflectedPrpInfos;
+            }
+            for (int i = 0; i < prpInfos.Count; i++)
+            {
+                if (!prpInfos[i].PropertyType.IsValueType
+                    && prpInfos[i].PropertyType != typeof(string))
+                {
+                    if (!typeof(IEnumerable).IsAssignableFrom(prpInfos[i].PropertyType) || prpInfos[i].PropertyType == typeof(string))
                     {
-                        propertyList.Add($"{memberPath}{prpInfo[i].Name}", new TS());
-                        var descendingPropertyList = GetPropertyNames(prpInfo[i].PropertyType, new Dictionary<string, TS>(), $"{memberPath}{prpInfo[i].Name}.");
+                        propertyList.Add($"{memberPath}{prpInfos[i].Name}", new TS());
+                        var descendingPropertyList = GetPropertyNames(prpInfos[i].PropertyType, new Dictionary<string, TS>(),filter, $"{memberPath}{prpInfos[i].Name}.", type);
                         foreach (var prop in descendingPropertyList)
                         {
                             propertyList.Add(prop.Key, prop.Value);
@@ -58,7 +80,7 @@ namespace FluentDecorator
                 }
                 else
                 {
-                    propertyList.Add($"{memberPath}{prpInfo[i].Name}", new TS());
+                    propertyList.Add($"{memberPath}{prpInfos[i].Name}", new TS());
                 }
             }
             return propertyList;

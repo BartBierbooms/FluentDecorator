@@ -7,5 +7,5 @@ namespace FluentDecoratorTest.Data
     {
         public Guid Id { get; set; }
         public List<SimpleClass> SimpleClasses { get; set; }  
-}
+    }
 }
